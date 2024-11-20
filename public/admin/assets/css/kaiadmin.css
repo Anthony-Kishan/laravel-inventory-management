@@ -3177,8 +3177,7 @@ label.error {
 .navbar-header {
   padding: 0px 30px; }
   .navbar-header .container-fluid {
-    min-height: inherit;
-    padding: 0 !important; }
+    min-height: inherit; }
   .navbar-header .dropdown-toggle::after {
     margin-left: 0; }
 

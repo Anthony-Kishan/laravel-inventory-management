@@ -1,11 +1,15 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\DashboardController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => 'auth','prefix' => 'admin'],  function () {
+    Route::get('/dashboard', [DashboardController::class,'dashboard'])->name('admin.dashboard');
+});

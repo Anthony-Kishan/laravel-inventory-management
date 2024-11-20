@@ -48,7 +48,7 @@
                         </form>
                     </ul>
                 </li>
-                <li class="nav-item topbar-icon dropdown hidden-caret">
+                <!-- <li class="nav-item topbar-icon dropdown hidden-caret">
                     <a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-envelope"></i>
@@ -114,8 +114,8 @@
                             </a>
                         </li>
                     </ul>
-                </li>
-                <li class="nav-item topbar-icon dropdown hidden-caret">
+                </li> -->
+                <!-- <li class="nav-item topbar-icon dropdown hidden-caret">
                     <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button"
                         data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-bell"></i>
@@ -179,8 +179,8 @@
                             </a>
                         </li>
                     </ul>
-                </li>
-                <li class="nav-item topbar-icon dropdown hidden-caret">
+                </li> -->
+                <!-- <li class="nav-item topbar-icon dropdown hidden-caret">
                     <a class="nav-link" data-bs-toggle="dropdown" href="#" aria-expanded="false">
                         <i class="fas fa-layer-group"></i>
                     </a>
@@ -244,7 +244,7 @@
                             </div>
                         </div>
                     </div>
-                </li>
+                </li> -->
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
                     <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
@@ -268,19 +268,23 @@
                                     <div class="u-text">
                                         <h4>Hizrian</h4>
                                         <p class="text-muted">hello@example.com</p>
-                                        <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View Profile</a>
+                                        <!-- <a href="profile.html" class="btn btn-xs btn-secondary btn-sm">View Profile</a> -->
                                     </div>
                                 </div>
                             </li>
                             <li>
-                                <div class="dropdown-divider"></div>
+                                <!-- <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="#">My Profile</a>
                                 <a class="dropdown-item" href="#">My Balance</a>
                                 <a class="dropdown-item" href="#">Inbox</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Account Setting</a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#">Logout</a>
+                                <a class="dropdown-item" href="#">Account Setting</a> -->
+                                <div class="dropdown-divider"></div> 
+                                <a class="dropdown-item" href="#" onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">Logout</a>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
                             </li>
                         </div>
                     </ul>
