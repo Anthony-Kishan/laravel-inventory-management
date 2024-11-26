@@ -30,7 +30,7 @@
                                 <td>{{ $admin->name}}</td>
                                 <td>{{ $admin->email}}</td>
                                 <td>{{ date('d M, Y', strtotime($admin->created_at))}}</td>
-                                <td>{{ $admin->created_at != $admin->updated_at ? date('d M, Y', strtotime($admin->updated_at_at)) : "NULL" }}</td>
+                                <td>{{ $admin->created_at != $admin->updated_at ? date('d M, Y', strtotime($admin->updated_at)) : "NULL" }}</td>
                                 <td>
                                     <div class="btn-group d-flex align-items-center gap-3 flex-wrap">
                                     
@@ -40,17 +40,20 @@
 
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
-                                                <a href="#" class="dropdown-item">Edit</a>
-                                            </li>
-                                            <li>
+                                                <a href="{{route('admin.edit', encrypt($admin->id))}}" class="dropdown-item">{{__('Edit')}}</a>
+                                            
                                                 <a href="#" class="dropdown-item">Status Update</a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="dropdown-item">Delete</a>
-                                            </li>
+                                            
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick='document.getElementById("delete-form{{ $loop->iteration }}").submit();'>
+                                                    {{__('Delete')}}
+                                                </a>
 
+                                                <form id="delete-form{{ $loop->iteration }}" action="{{ route('admin.destroy', encrypt($admin->id)) }}" method="POST" class="d-none">
+                                                    @csrf
+                                                    @method('DELETE');
+                                                </form>
+                                            </li>
                                         </ul>
-
                                     </div>
                                 </td>
                             </tr>
