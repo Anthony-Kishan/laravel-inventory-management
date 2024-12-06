@@ -18,8 +18,9 @@
                             <th>{{__('SL')}}</th>
                             <th>{{__('Name')}}</th>
                             <th>{{__('Email')}}</th>
+                            <th>{{__('Status')}}</th>
                             <th>{{__('Created At')}}</th>
-                            <th>{{__('Updated At')}}</th>
+                            <th>{{__('Created By')}}</th>
                             <th>{{__('Actions')}}</th>
                         </tr>
                     </thead>
@@ -29,8 +30,11 @@
                                 <td>{{ $loop->iteration}}</td>
                                 <td>{{ $admin->name}}</td>
                                 <td>{{ $admin->email}}</td>
+                                <td>
+                                    <span class="{{$admin->getStatusClass()}}">{{$admin->getStatus()}}</span>
+                                </td>
                                 <td>{{ date('d M, Y', strtotime($admin->created_at))}}</td>
-                                <td>{{ $admin->created_at != $admin->updated_at ? date('d M, Y', strtotime($admin->updated_at)) : "NULL" }}</td>
+                                <td>{{$admin->creator ? $admin->creator->name : 'System'}}</td>
                                 <td>
                                     <div class="btn-group d-flex align-items-center gap-3 flex-wrap">
                                     
@@ -42,7 +46,7 @@
                                             <li>
                                                 <a href="{{route('admin.edit', encrypt($admin->id))}}" class="dropdown-item">{{__('Edit')}}</a>
                                             
-                                                <a href="#" class="dropdown-item">Status Update</a>
+                                                <a href="{{route('admin.status', encrypt($admin->id))}}" class="dropdown-item">{{$admin->getStatusTitle()}}</a>
                                             
                                                 <a class="dropdown-item" href="javascript:void(0)" onclick='document.getElementById("delete-form{{ $loop->iteration }}").submit();'>
                                                     {{__('Delete')}}

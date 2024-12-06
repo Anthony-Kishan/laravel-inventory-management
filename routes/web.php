@@ -14,5 +14,7 @@ Auth::routes();
 Route::group(['middleware' => 'auth','prefix' => 'admin-dashboard'],  function () {
     Route::get('/', [DashboardController::class,'dashboard'])->name('admin.dashboard');
 
+    // ADMIN MANAGEMENT ROUTE
     Route::resource('/admin', AdminController::class);
+    Route::get('/admin/status/{id}', [AdminController::class,'status'])->name('admin.status');
 });
