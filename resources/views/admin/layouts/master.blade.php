@@ -16,10 +16,7 @@
 
 
 
-    <link
-        rel="icon"
-        href="{{asset('admin/assets/img/kaiadmin/favicon.ico')}}"
-        type="image/x-icon" />
+    <link rel="icon" href="{{asset('admin/assets/img/kaiadmin/favicon.ico')}}" type="image/x-icon" />
 
     <!-- Fonts and icons -->
     <script src="{{asset('admin/assets/js/plugin/webfont/webfont.min.js')}}"></script>
@@ -37,7 +34,7 @@
                 ],
                 urls: ["{{asset('admin/assets/css/fonts.min.css')}}"],
             },
-            active: function() {
+            active: function () {
                 sessionStorage.fonts = true;
             },
         });
@@ -46,10 +43,28 @@
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{asset('admin/assets/css/plugins.min.css')}}" />
     <link rel="stylesheet" href="{{asset('admin/assets/css/kaiadmin.min.css')}}" />
-
+    @stack('plugin-styles')
+    <link rel="stylesheet" href="{{asset('admin/css/custom.css')}}">
+    @stack('styles')
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (session('success'))
+                showAlert('success', '{{ session('success') }}');
+            @endif
+
+            @if (session('error'))
+                showAlert('error', '{{ session('error') }}');
+            @endif
+
+            @if (session('warning'))
+                showAlert('warning', '{{ session('warning') }}');
+            @endif
+        });
+    </script>
 </head>
 
 <body>
@@ -78,6 +93,9 @@
 
     <!-- Kaiadmin JS -->
     <script src="{{asset('admin/assets/js/kaiadmin.min.js')}}"></script>
+    @stack('plugin-js')
+    <link rel="stylesheet" href="{{asset('admin/js/custom.js')}}">
+    @stack('js')
 </body>
 
 </html>
