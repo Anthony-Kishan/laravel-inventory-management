@@ -18,8 +18,9 @@
                             <th>{{__('SL')}}</th>
                             <th>{{__('Name')}}</th>
                             <th>{{__('Email')}}</th>
+                            <th>{{__('Status')}}</th>
                             <th>{{__('Created At')}}</th>
-                            <th>{{__('Updated At')}}</th>
+                            <th>{{__('Created By')}}</th>
                             <th>{{__('Actions')}}</th>
                         </tr>
                     </thead>
@@ -29,8 +30,11 @@
                                 <td>{{ $loop->iteration}}</td>
                                 <td>{{ $admin->name}}</td>
                                 <td>{{ $admin->email}}</td>
+                                <td>
+                                    <span class="{{$admin->getStatusClass()}}">{{$admin->getStatus()}}</span>
+                                </td>
                                 <td>{{ date('d M, Y', strtotime($admin->created_at))}}</td>
-                                <td>{{ $admin->created_at != $admin->updated_at ? date('d M, Y', strtotime($admin->updated_at)) : "NULL" }}</td>
+                                <td>{{$admin->creator ? $admin->creator->name : 'System'}}</td>
                                 <td>
                                     <div class="btn-group d-flex align-items-center gap-3 flex-wrap">
                                     
@@ -40,11 +44,13 @@
 
                                         <ul class="dropdown-menu dropdown-menu-end">
                                             <li>
+                                                <a href="javascript:void(0)" data-admin_id="{{ encrypt($admin->id) }}" class="dropdown-item show">{{__('Details')}}</a>
+
                                                 <a href="{{route('admin.edit', encrypt($admin->id))}}" class="dropdown-item">{{__('Edit')}}</a>
                                             
-                                                <a href="#" class="dropdown-item">Status Update</a>
+                                                <a href="{{route('admin.status', encrypt($admin->id))}}" class="dropdown-item">{{$admin->getStatusTitle()}}</a>
                                             
-                                                <a class="dropdown-item" href="javascript:void(0)" onclick='document.getElementById("delete-form{{ $loop->iteration }}").submit();'>
+                                                <a class="dropdown-item" href="javascript:void(0)" onclick='confirmDelete(() => document.getElementById("delete-form{{ $loop->iteration }}").submit()) '>
                                                     {{__('Delete')}}
                                                 </a>
 
@@ -64,5 +70,69 @@
         </div>
     </div>
 </div>
-
+@include('admin.includes.details_modal', ['modal_title' => 'Admin Details'])
 @endsection
+
+@push('js')
+    <script>
+        $(document).ready(()=> {
+            $('.show').on('click',function() {
+                let id = $(this).data('admin_id');
+                let url = ("{{ route('admin.show', ['id']) }}");
+                let _url = url.replace('id', id);
+                $.ajax({
+                    url: _url,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: (data)=> {
+                        var result = `
+                                <table class="table table-striped">
+                                    <tr>
+                                        <th class="text-nowrap">Name</th>
+                                        <th>:</th>
+                                        <td>${data.name}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Email</th>
+                                        <th>:</th>
+                                        <td>${data.email}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Status</th>
+                                        <th>:</th>
+                                        <td><span class="${data.getStatusClass}">${data.getStatus}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Created Date</th>
+                                        <th>:</th>
+                                        <td>${data.created_time}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Created By</th>
+                                        <th>:</th>
+                                        <td>${data.creator ? data.creator.name : 'System'}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Updated Date</th>
+                                        <th>:</th>
+                                        <td>${data.updated_time}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="text-nowrap">Updated By</th>
+                                        <th>:</th>
+                                        <td>${data.updator ? data.updator.name : 'NULL'}</td>
+                                    </tr>
+                                </table>
+                                `;
+                        $('#modal_data').html(result);
+                        showModal('myModal');
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching admin data:', error);
+                    }
+                });
+            });
+        });
+    </script>
+
+@endpush

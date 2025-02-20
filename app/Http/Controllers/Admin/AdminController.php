@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Models\User;
 use App\Http\Requests\AdminRequest;
+use Illuminate\Support\Facades\Auth;
 
 class AdminController extends Controller
 {
@@ -16,7 +18,7 @@ class AdminController extends Controller
      */
     public function index(): View
     {
-        $data['admins'] = User::latest()->get();
+        $data['admins'] = User::with(['creator'])->latest()->get();
         return view('admin.admin_management.index', $data);
     }
 
@@ -37,16 +39,24 @@ class AdminController extends Controller
         $admin->name = $request->name;
         $admin->email = $request->email;
         $admin->password = $request->password;
-        $admin->save(); 
+        $admin->created_by = Auth::user()->id;
+        $admin->save();
+        session()->flash('success', 'Admin created successfully');
         return redirect()->route('admin.index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id):JsonResponse
     {
-        //
+        $admin = User::with(['creator', 'updator'])->findOrFail(decrypt($id));
+        $admin->getStatus = $admin->getStatus();
+        $admin->getStatusClass = $admin->getStatusClass();
+        $admin->getStatusTitle = $admin->getStatusTitle();
+        $admin->created_time = date('d M, Y', strtotime($admin->created_at));
+        $admin->updated_time = $admin->created_at != $admin->updated_at ? date('d M, Y', strtotime($admin->updated_at)) : "NULL";
+        return response()->json($admin);
     }
 
     /**
@@ -54,8 +64,8 @@ class AdminController extends Controller
      */
     public function edit(string $id): View
     {
-        $data['admin'] = User::findOrFail( decrypt($id) );
-        return view ('admin.admin_management.edit', $data);
+        $data['admin'] = User::findOrFail(decrypt($id));
+        return view('admin.admin_management.edit', $data);
     }
 
     /**
@@ -66,10 +76,11 @@ class AdminController extends Controller
         $admin = User::findOrFail(decrypt($id));
         $admin->name = $request->name;
         $admin->email = $request->email;
-        if($request->password){
+        if ($request->password) {
             $admin->password = $request->password;
         }
         $admin->update();
+        session()->flash('success', 'Admin updated successfully');
         return redirect()->route('admin.index');
     }
 
@@ -79,7 +90,23 @@ class AdminController extends Controller
     public function destroy(string $id)
     {
         $admin = User::findOrFail(decrypt($id));
+        $admin->deleted_by = Auth::user()->id;
+        $admin->update();
         $admin->delete();
+        // session()->flash('success', 'Admin deleted successfully');
+        return redirect()->route('admin.index');
+    }
+
+    /**
+     * Remove the specified resource status.
+     */
+    public function status(string $id)
+    {
+        $admin = User::findOrFail(decrypt($id));
+        $admin->status = !$admin->status;
+        $admin->updated_by = Auth::user()->id;
+        $admin->update();
+        session()->flash('success', 'Admin status changed successfully');
         return redirect()->route('admin.index');
     }
 }
